@@ -27,10 +27,11 @@ while active:
     print("1. Ajouter un dataset")
     print("2. Afficher les datasets")
     print("3. Rechercher un dataset")
-    print("4. Quitter")
+    print("4. Quitter \n")
 
     choix = input("Entrez votre choix (1-4): ")
 
+    #Q6 Dictionnaire pour stocker les datasets 
     if choix == "1":
         # Ajouter un dataset
         nom = input("Entrez le nom du dataset: ")
@@ -41,15 +42,26 @@ while active:
         format = input("Entrez le format du dataset (CSV, JSON): ")
         public = input("Le dataset est-il public ? (true/false): ")
 
+        # Stockage des informations du dataset dans un dictionnaire
+        dataset = {
+            "nom": nom,
+            "domaine": domaine,
+            "nbr_lignes": nbr_lignes,
+            "nbr_colonnes": nbr_colonnes,
+            "taille": taille,
+            "format": format,
+            "public": public
+        }
+
         # Affichage des informations du dataset ajouté
-        print("\nRésumé formaté du dataset ajouté:")
-        print(f"Nom du dataset       : {nom}")
-        print(f"Domaine du dataset   : {domaine}")
-        print(f"Nombre de lignes     : {nbr_lignes}")
-        print(f"Nombre de colonnes   : {nbr_colonnes}")
-        print(f"Taille du dataset    : {taille}")
-        print(f"Format du dataset    : {format}")
-        print(f"Public du dataset    : {public}")
+        print("\nRésumé du dataset ajouté:")
+        print(f"Nom du dataset       : {dataset['nom']}")
+        print(f"Domaine du dataset   : {dataset['domaine']}")
+        print(f"Nombre de lignes     : {dataset['nbr_lignes']}")
+        print(f"Nombre de colonnes   : {dataset['nbr_colonnes']}")
+        print(f"Taille du dataset    : {dataset['taille']}")
+        print(f"Format du dataset    : {dataset['format']}")
+        print(f"Public du dataset    : {dataset['public']}")
 
     elif choix == "2":
         # Afficher les datasets (fonctionnalité à implémenter)
