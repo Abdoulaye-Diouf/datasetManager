@@ -38,9 +38,15 @@ while active:
             print("Domaine invalide. Veuillez choisir parmi les domaines disponibles.")
             domaine = input(f"Domaine du dataset {domaine_auto}: ")
 
-        nbr_lignes = int(input("Entrez le nombre de lignes du dataset: "))
-        nbr_colonnes = int(input("Entrez le nombre de colonnes du dataset: "))
-        taille = float(input("Entrez la taille du dataset (en Mo): "))
+        # Gestion des exceptions pour les entrées numériques
+        try:
+            nbr_lignes = int(input("Entrez le nombre de lignes du dataset: "))
+            nbr_colonnes = int(input("Entrez le nombre de colonnes du dataset: "))
+            taille = float(input("Entrez la taille du dataset (en Mo): "))
+        except ValueError:
+            print("Erreur : veuillez entrer des valeurs numériques valides.")
+            continue
+
         format = input("Entrez le format du dataset (CSV, JSON): ")
         public = input("Le dataset est-il public ? (true/false): ")
 
@@ -86,10 +92,15 @@ while active:
             if dataset["nom"] == nom_recherche:
                 dataset_trouve = dataset
                 break
-        if dataset_trouve:
-            print(f"Dataset trouvé: {dataset_trouve['nom']}")
-        else:
-            print("Dataset non trouvé.")
+
+        # Gestion des exceptions pour l'affichage des informations du dataset trouvé
+        try:
+            if dataset_trouve:
+                print(f"Dataset trouvé: {dataset_trouve['nom']}")
+            else:
+                print("Dataset non trouvé.")
+        except KeyError:
+            print("Erreur : le dataset trouvé ne contient pas toutes les informations attendues.")
 
     elif choix == "4":
         # Trier les datasets 
@@ -105,12 +116,16 @@ while active:
             if dataset["nom"] == nom_suppression:
                 dataset_a_supprimer = dataset
                 break
-        if dataset_a_supprimer:
-            catalogue_data.remove(dataset_a_supprimer)
-            print(f"Dataset '{dataset_a_supprimer['nom']}' supprimé avec succès.")
-        else:
-            print("Dataset non trouvé.")
 
+        # Gestion des exceptions pour la suppression du dataset
+        try:   
+            if dataset_a_supprimer:
+                catalogue_data.remove(dataset_a_supprimer)
+                print(f"Dataset '{dataset_a_supprimer['nom']}' supprimé avec succès.")
+            else:
+                print("Dataset non trouvé.")
+        except ValueError:
+            print("Erreur : le dataset à supprimer n'a pas été trouvé dans le catalogue.")
    
 
     elif choix == "6":
@@ -121,8 +136,12 @@ while active:
         for dataset in catalogue_data:
             if dataset["nom"] == nom_modification:
                 dataset_a_modifier = dataset
-            break   
-        if dataset_a_modifier:
+            break 
+
+        # Gestion des exceptions pour la modification du dataset
+        try:
+            if dataset_a_modifier is None:
+                raise KeyError(nom_modification)
             print(f"Dataset trouvé: {dataset_a_modifier['nom']}")
             attribut_a_modifier = input(
                 "Quel attribut souhaitez-vous modifier ? "
@@ -130,12 +149,22 @@ while active:
             )
             if attribut_a_modifier in dataset_a_modifier:
                 nouvelle_valeur = input(f"Entrez la nouvelle valeur pour {attribut_a_modifier}: ")
+
+                # --- Gestion de l'exception : saisie non numérique lors de la modification ---
+                if attribut_a_modifier in ("nbr_lignes", "nbr_colonnes"):
+                    nouvelle_valeur = int(nouvelle_valeur)
+                elif attribut_a_modifier == "taille":
+                    nouvelle_valeur = float(nouvelle_valeur)
+
                 dataset_a_modifier[attribut_a_modifier] = nouvelle_valeur
                 print(f"{attribut_a_modifier} du dataset '{dataset_a_modifier['nom']}' a été modifié avec succès.")
             else:
                 print("Attribut invalide. Veuillez choisir un attribut valide.")
-        else:
-            print("Dataset non trouvé.")
+        except KeyError:
+            print(f"Erreur : aucun dataset nommé '{nom_modification}' n'a été trouvé.")
+        except ValueError:
+            print("Erreur : la nouvelle valeur saisie n'est pas un nombre valide. Modification annulée.")
+
 
     elif choix == "7":
         # les statistiques des datasets
@@ -185,21 +214,27 @@ while active:
 
     elif choix == "9":
         # Recharger et Affichager des datasets depuis un fichier CSV
-        with open(chemin_csv, mode='r', newline='', encoding='utf-8') as fichier_csv:
-            lecteur_csv = csv.DictReader(fichier_csv)
-            catalogue_data = [dict(row) for row in lecteur_csv]
-        print("Les datasets ont été rechargés depuis le fichier CSV avec succès.")
-        # afficher les datasets rechargés
-        if not catalogue_data:
-            print("Aucun dataset enregistré pour le moment.")
-        else:
-            print("\n--- Liste des datasets rechargés ---")
-            for dataset in catalogue_data:
-                print(f"-nom : {dataset['nom']}\n domaine : {dataset['domaine']}\n  "
-                    f" lignes :  {dataset['nbr_lignes']}\n format : {dataset['format']}")
-                
-         
+        # Gestion des exceptions pour la lecture du fichier CSV
+        try:
+            with open(chemin_csv, mode='r', newline='', encoding='utf-8') as fichier_csv:
+                lecteur_csv = csv.DictReader(fichier_csv)
+                catalogue_data = [dict(row) for row in lecteur_csv]
+            print("Les datasets ont été rechargés depuis le fichier CSV avec succès.")
 
+            # afficher les datasets rechargés
+            if not catalogue_data:
+                print("Aucun dataset enregistré pour le moment.")
+            else:
+                print("\n--- Liste des datasets rechargés ---")
+                for dataset in catalogue_data:
+                    print(f"-nom : {dataset['nom']}\n domaine : {dataset['domaine']}\n  "
+                        f" lignes :  {dataset['nbr_lignes']}\n format : {dataset['format']}")
+
+        except FileNotFoundError:
+            print("Erreur : le fichier CSV n'existe pas.")
+        except Exception as e:
+            print(f"Erreur lors de la lecture du fichier CSV : {e}")
+      
 
     elif choix == "10":
         # Quitter le programme
