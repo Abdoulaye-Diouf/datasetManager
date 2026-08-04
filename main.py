@@ -1,3 +1,6 @@
+import csv
+chemin_csv = r"C:\ODC\veille-python\pratique\code\datasetManager\datasets.csv"
+
 #Tuble contenant les domaines de datasets
 domaine_auto = ("Santé", "Finance", "Agriculture", "Transport", "Éducation") 
 
@@ -6,19 +9,24 @@ catalogue_data = []
 
 
 #Menu interactif pour l'utilisateur provisoirement
+print("\n ===== Menu =====")
+print("1. Ajouter un dataset")
+print("2. Afficher les datasets")
+print("3. Rechercher un dataset")
+print("4. trier les datasets")
+print("5. Supprimer un dataset")
+print("6. Modifier un dataset")
+print("7. Voir les statistiques des datasets")
+print("8. Sauvegarder les datasets dans un fichier CSV")
+print("9. Recharger les datasets depuis un fichier CSV")
+print("10. Quitter \n")
+
+
 active = True
 while active:
-    print("\n ===== Menu =====")
-    print("1. Ajouter un dataset")
-    print("2. Afficher les datasets")
-    print("3. Rechercher un dataset")
-    print("4. trier les datasets")
-    print("5. Supprimer un dataset")
-    print("6. Modifier un dataset")
-    print("7. Voir les statistiques des datasets")
-    print("8. Quitter \n")
+    
 
-    choix = input("Entrez votre choix (1-7): ")
+    choix = input("Entrez votre choix (1-10): ")
 
     #Q6 Dictionnaire pour stocker les datasets 
     if choix == "1":
@@ -164,11 +172,39 @@ while active:
                 print(f"- {domaine} : {count} datasets")
 
     elif choix == "8":
+        # Sauvegarder les datasets dans un fichier CSV
+        with open(chemin_csv, mode='w', newline='', encoding='utf-8') as fichier_csv:
+            if catalogue_data:
+                champs = catalogue_data[0].keys()
+                lecteur_csv = csv.DictWriter(fichier_csv, fieldnames=champs)
+                lecteur_csv.writeheader()
+                lecteur_csv.writerows(catalogue_data)
+        print("Les datasets ont été sauvegardés dans le fichier CSV avec succès.")
+
+    
+
+    elif choix == "9":
+        # Recharger et Affichager des datasets depuis un fichier CSV
+        with open(chemin_csv, mode='r', newline='', encoding='utf-8') as fichier_csv:
+            lecteur_csv = csv.DictReader(fichier_csv)
+            catalogue_data = [dict(row) for row in lecteur_csv]
+        print("Les datasets ont été rechargés depuis le fichier CSV avec succès.")
+        # afficher les datasets rechargés
+        if not catalogue_data:
+            print("Aucun dataset enregistré pour le moment.")
+        else:
+            print("\n--- Liste des datasets rechargés ---")
+            for dataset in catalogue_data:
+                print(f"-nom : {dataset['nom']}\n domaine : {dataset['domaine']}\n  "
+                    f" lignes :  {dataset['nbr_lignes']}\n format : {dataset['format']}")
+                
+         
+
+
+    elif choix == "10":
         # Quitter le programme
         print("Au revoir !")
         active = False
   
     else:
-        print("Choix invalide. Veuillez entrer un nombre entre 1 et 7.")
-
-    
+        print("Choix invalide. Veuillez entrer un nombre entre 1 et 10.")
