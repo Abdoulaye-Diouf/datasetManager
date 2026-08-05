@@ -1,4 +1,2 @@
 nom,domaine,nbr_lignes,nbr_colonnes,taille,format,public
-Titanic,Transport,100,19,10.0,CSV,true
-Worviw,Finance,100,700,19.0,CSV,true
-zoneAPi,Santé,9900,100,20.0,JSON,false
+FaxTel,Finance,9001,388,900.0,JSON,true
