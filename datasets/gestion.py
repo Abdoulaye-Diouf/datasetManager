@@ -1,7 +1,3 @@
-import csv
-
-chemin_csv = r"C:\ODC\veille-python\pratique\code\datasetManager\datasets.csv"
-
 # Tuple contenant les domaines de datasets
 domaine_auto = ("Santé", "Finance", "Agriculture", "Transport", "Éducation")
 
@@ -51,17 +47,6 @@ def ajouter_dataset(catalogue_data):
     print(f"Public du dataset    : {dataset['public']}")
 
 
-
-# Fonction pour afficher les datasets
-def afficher_datasets(catalogue_data):
-    #Affiche la liste résumée des datasets du catalogue.
-    if not catalogue_data:
-        print("Aucun dataset enregistré pour le moment.")
-    else:
-        print("\n--- Liste des datasets ---")
-        for dataset in catalogue_data:
-            print(f"- {dataset['nom']} | {dataset['domaine']} | "
-                  f"{dataset['nbr_lignes']} lignes | {dataset['format']}")
 
 # Fonction pour rechercher un dataset par son nom
 def rechercher_dataset(catalogue_data):
@@ -144,84 +129,3 @@ def modifier_dataset(catalogue_data):
         print(f"Erreur : aucun dataset nommé '{nom_modification}' n'a été trouvé.")
     except ValueError:
         print("Erreur : la nouvelle valeur saisie n'est pas un nombre valide. Modification annulée.")
-
-
-# Fonction statistiques des datasets
-def statistiques(catalogue_data):
-    #Affiche des statistiques globales sur les datasets du catalogue.
-    if not catalogue_data:
-        print("Aucun dataset enregistré pour le moment.")
-        return
-
-    total_datasets = len(catalogue_data)
-    total_lignes = sum(dataset["nbr_lignes"] for dataset in catalogue_data)
-    moyenne_colonnes = (sum(dataset["nbr_colonnes"] for dataset in catalogue_data) / total_datasets
-                         if total_datasets > 0 else 0)
-    total_taille = sum(dataset["taille"] for dataset in catalogue_data)
-    data_public = sum(1 for dataset in catalogue_data if dataset["public"].lower() == "true")
-    data_prive = total_datasets - data_public
-    nb_csv = sum(1 for dataset in catalogue_data if dataset["format"].lower() == "csv")
-    nb_json = sum(1 for dataset in catalogue_data if dataset["format"].lower() == "json")
-
-    rp_domaine = {}
-    for dataset in catalogue_data:
-        domaine = dataset["domaine"]
-        if domaine in rp_domaine:
-            rp_domaine[domaine] += 1
-        else:
-            rp_domaine[domaine] = 1
-
-    print("\n--- Statistiques des datasets ---")
-    print(f"Nombre total de datasets : {total_datasets}")
-    print(f"Nombre total de lignes   : {total_lignes}")
-    print(f"Moyenne de colonnes      : {moyenne_colonnes:.2f}")
-    print(f"Taille totale des datasets : {total_taille} Mo")
-    print(f"Datasets publics : {data_public}")
-    print(f"Datasets privés : {data_prive}")
-    print(f"Nombre de datasets au format CSV : {nb_csv}")
-    print(f"Nombre de datasets au format JSON : {nb_json}")
-    print("Répartition des datasets par domaine :")
-    for domaine, count in rp_domaine.items():
-        print(f"- {domaine} : {count} datasets")
-
-
-# Fonction sauvegarder les datasets dans un fichier CSV
-def sauvegarder(catalogue_data):
-    #Sauvegarde le catalogue de datasets dans un fichier CSV.
-    try:
-        with open(chemin_csv, mode='w', newline='', encoding='utf-8') as fichier_csv:
-            if catalogue_data:
-                champs = catalogue_data[0].keys()
-                lecteur_csv = csv.DictWriter(fichier_csv, fieldnames=champs)
-                lecteur_csv.writeheader()
-                lecteur_csv.writerows(catalogue_data)
-        print("Les datasets ont été sauvegardés dans le fichier CSV avec succès.")
-    except OSError as e:
-        print(f"Erreur : impossible d'écrire dans le fichier '{chemin_csv}' ({e}).")
-        
-
-# Fonction recharger les datasets depuis un fichier CSV
-def recharger():
-    #Recharge le catalogue de datasets depuis le fichier CSV et le retourne.
-    catalogue_data = []
-    # --- Gestion des exceptions : fichier inexistant / fichier vide ---
-    try:
-        with open(chemin_csv, mode='r', newline='', encoding='utf-8') as fichier_csv:
-            lecteur_csv = csv.DictReader(fichier_csv)
-            catalogue_data = [dict(row) for row in lecteur_csv]
-
-        if not catalogue_data:
-            print("Le fichier CSV est vide. Aucun dataset n'a été chargé.")
-        else:
-            print("Les datasets ont été rechargés depuis le fichier CSV avec succès.")
-            print("\n--- Liste des datasets rechargés ---")
-            for dataset in catalogue_data:
-                print(f"-nom : {dataset['nom']}\n domaine : {dataset['domaine']}\n  "
-                      f" lignes :  {dataset['nbr_lignes']}\n format : {dataset['format']}")
-
-    except FileNotFoundError:
-        print(f"Erreur : le fichier '{chemin_csv}' n'existe pas. Veuillez d'abord sauvegarder un catalogue (option 8).")
-    except OSError as e:
-        print(f"Erreur lors de la lecture du fichier : {e}")
-
-    return catalogue_data

@@ -1,2 +1,2 @@
 nom,domaine,nbr_lignes,nbr_colonnes,taille,format,public
-Iris,Santé,10009,300,15.0,JSON,true
+Iris,Santé,12390,1290,200.0,CSV,true

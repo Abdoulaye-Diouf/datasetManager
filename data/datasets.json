@@ -1,0 +1,20 @@
+[
+    {
+        "nom": "FaxTel",
+        "domaine": "Finance",
+        "nbr_lignes": 9001,
+        "nbr_colonnes": 388,
+        "taille": 900.0,
+        "format": "JSON",
+        "public": "true"
+    },
+    {
+        "nom": "Titanic",
+        "domaine": "Transport",
+        "nbr_lignes": 10090,
+        "nbr_colonnes": 199,
+        "taille": 190.0,
+        "format": "JSON",
+        "public": "true"
+    }
+]
